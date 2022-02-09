@@ -285,23 +285,6 @@ func (c *Client) Do(req *http.Request, responseBody interface{}) (*http.Response
 		dec.DisallowUnknownFields()
 	}
 
-	var unescapedBody string
-	err = dec.Decode(&unescapedBody)
-	if err != nil && err != io.EOF {
-		// create a simple error response
-		errorResponse := &ErrorResponse{Response: httpResp}
-		errorResponse.Errors = append(errorResponse.Errors, err)
-		return httpResp, errorResponse
-	}
-
-	r := strings.NewReader(unescapedBody)
-	dec = json.NewDecoder(r)
-	if c.disallowUnknownFields {
-		dec.DisallowUnknownFields()
-	}
-
-	log.Println(unescapedBody)
-
 	err = dec.Decode(responseBody)
 	if err != nil && err != io.EOF {
 		// create a simple error response
